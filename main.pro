@@ -5,6 +5,10 @@ QMAKE_CXXFLAGS+= -std=c++11 -Wno-deprecated-register
 
 SOURCES += \
   main.cc \
+    GainRepeatability.cc \
+    Samegain_Diffrnttemp.cc \
+    Check_Gain.cc \
+    histrogram_functions.cc
 
 CLASSES += \
   Helpers \
@@ -32,4 +36,7 @@ UI_DIR = builds/.tmp
 RCC_DIR = builds/.tmp
 
 HEADERS += \
-    histogram_functions.hh
+    histogram_functions.hh \
+    GainRepeatability.hh \
+    Samegain_Diffrnttemp.hh \
+    Check_Gain.hh

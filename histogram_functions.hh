@@ -1,34 +1,15 @@
-#pragma once
+#ifndef HISTOGRAM_FUNCTIONS
+#define HISTOGRAM_FUNCTIONS
 
-double meanValue(TH1D* h)
+#include <TH1D.h>
+
+namespace HISTOGRAM_FUNCTION
 {
-  double mean=0;
-  int n = h->GetNbinsX();
-  double* channel = &(h->GetArray()[1]);
-
-  // full range (except border channels)
-  for (int i=0; i<n; ++i)
-    if ((((i+1)%64)==0 || (i%64)==0))
-      ; else mean+=channelLightYield[i];
-  mean /= double(n-16);
-
-  /*
-  // short range
-  int count = 0;
-
-  for (int i=0; i<n; ++i)
-  {
-      if ((((i+1)%64)==0 || (i%64)==0))
-          ; else
-      {
-          if ((i>128) && (i<384)) {
-              mean+=channel[i];
-              count++;
-          }
-      }
-  }
-  mean /= double(count-1);
-  */
-
-  return mean;
+double meanValue(TH1D* h);
+void cropHistrogram(TH1D* h_fill, const TH1D* h_ref);
+void cropped_fillAnotherHist(TH1D* h_fill, const TH1D* h_ref);
+void cropped_normalizeOnAnotherHist(TH1D* h_norm, const TH1D* h_ref);
+double cropped_getMeanValue(const TH1D* h);
 }
+
+#endif // HISTOGRAM_FUNCTIONS
