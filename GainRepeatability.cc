@@ -41,12 +41,6 @@ void GainRepeatability::AddData(TH1D* h_gain_allchannels)
 {
     vec_h_gain_allchannels.push_back(h_gain_allchannels);
 
-    std::vector<double> gain_in;
-    for (int i=1; i<=h_gain_allchannels->GetNbinsX(); ++i)
-        gain_in.push_back(h_gain_allchannels->GetBinContent(i));
-
-    gainValue.push_back(gain_in);
-
     return;
 }
 
@@ -58,6 +52,12 @@ void GainRepeatability::Evaluate()
         g_meanGainValues->SetPoint(i, i, meanGain);
         h_meanGainValues->Fill(meanGain);
 
+        std::vector<double> gain_in;
+        for (int i=1; i<=vec_h_gain_allchannels.at(i)->GetNbinsX(); ++i)
+            gain_in.push_back(vec_h_gain_allchannels.at(i)->GetBinContent(i));
+
+        gainValue.push_back(gain_in);
+
         TCanvas* c = new TCanvas();
         c->cd();
         vec_h_gain_allchannels[i]->Draw();
@@ -67,6 +67,7 @@ void GainRepeatability::Evaluate()
 
         h_singleCh_gainDist->Fill(vec_h_gain_allchannels.at(i)->GetBinContent(cherryPickChNr));
     }
+    calculate_channelGainRMS();
 
     TCanvas* c1 = new TCanvas("c_g_meanGainValues", "c_g_meanGainValues");
     c1->cd();
@@ -98,5 +99,26 @@ void GainRepeatability::Evaluate()
 
 void GainRepeatability::calculate_channelGainRMS()
 {
+    std::vector<double> channelRMS;
+    int nMeasurements = gainValue.size();
+    int nChannels = gainValue.at(0).size();
+    for(int channel= 0; channel < nChannels; ++channel)
+    {
+        double sum = 0;
+        for (int measNr = 0; measNr < nMeasurements; ++measNr)
+            sum += gainValue.at(measNr).at(channel);
+        double mean = sum /nChannels;
 
+        sum = 0;
+        for (int measNr = 0; measNr < nMeasurements; ++measNr)
+            sum += std::pow(gainValue.at(measNr).at(channel) - mean, 2);
+        double RMS = std::sqrt(1./double(nMeasurements-1)*sum);
+        channelRMS.push_back(RMS);
+    }
+
+    double sum = 0;
+    for (unsigned int i = 0; i< channelRMS.size(); ++i)
+        sum += channelRMS.at(i);
+    double averageRMS = sum/channelRMS.size();
+    std::cout << "\n\n" << averageRMS << std::endl;
 }
