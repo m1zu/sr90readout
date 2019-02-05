@@ -75,11 +75,26 @@ void HISTOGRAM_FUNCTION::cropped_normalizeOnAnotherHist(TH1D* h_norm, const TH1D
 double HISTOGRAM_FUNCTION::cropped_getMeanValue(const TH1D* h)
 {
      int n = h->GetNbinsX();
-     double sum = 0;
+     double sum = 0.;
+     double divider = 0.;
      for (int i=1; i<=n; ++i)
      {
          double value = h->GetBinContent(i);
-         sum += value;
+         double error = h->GetBinError(i);
+         sum += value/(error*error);
+         divider += 1./(error*error);
      }
-     return sum/n;
+     return sum/divider;
+}
+
+double HISTOGRAM_FUNCTION::cropped_getMeanValueError(const TH1D* h)
+{
+    int n = h->GetNbinsX();
+    double divider = 0.;
+    for (int i=1; i<=n; ++i)
+    {
+        double error = h->GetBinError(i)/sqrt(500000./512.); // average events in channel
+        divider += 1./(error*error);
+    }
+    return sqrt(1./divider);
 }

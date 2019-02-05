@@ -27,17 +27,26 @@ GainRepeatability::GainRepeatability(const int nFiles)
 
     g_meanGainValues = new TGraph(nFiles);
     h_meanGainValues = new TH1D("h_meanGainValues","h_meanGainValues", 40, 48., 48.5);
+    h_singleCh_gainDist = new TH1D("h_singleCh_gainDist","h_singleCh_gainDist", 40, 45., 48.5);
 }
 
 GainRepeatability::~GainRepeatability()
 {
     delete g_meanGainValues;
     delete h_meanGainValues;
+    delete h_singleCh_gainDist;
 }
 
 void GainRepeatability::AddData(TH1D* h_gain_allchannels)
 {
     vec_h_gain_allchannels.push_back(h_gain_allchannels);
+
+    std::vector<double> gain_in;
+    for (int i=1; i<=h_gain_allchannels->GetNbinsX(); ++i)
+        gain_in.push_back(h_gain_allchannels->GetBinContent(i));
+
+    gainValue.push_back(gain_in);
+
     return;
 }
 
@@ -55,6 +64,8 @@ void GainRepeatability::Evaluate()
         c->SaveAs(Form("~/sw/sr90readout/results/gainRepeatability/gain_allchannels_file_%d.pdf",i), "Overwrite");
         c->Close();
         delete c;
+
+        h_singleCh_gainDist->Fill(vec_h_gain_allchannels.at(i)->GetBinContent(cherryPickChNr));
     }
 
     TCanvas* c1 = new TCanvas("c_g_meanGainValues", "c_g_meanGainValues");
@@ -74,4 +85,18 @@ void GainRepeatability::Evaluate()
     c2->SaveAs("~/sw/sr90readout/results/gainRepeatability/h_meanGainValues.pdf", "Overwrite");
     c2->Close();
     delete c2;
+
+    TCanvas* c3 = new TCanvas("c_h_singleCh_gainDist", "c_h_singleCh_gainDist");
+    c3->cd();
+    gStyle->SetOptStat("mreuon");
+    h_singleCh_gainDist->Draw();
+    c3->SaveAs("~/sw/sr90readout/results/gainRepeatability/h_singleCh_gainDist.root", "Overwrite");
+    c3->SaveAs("~/sw/sr90readout/results/gainRepeatability/h_singleCh_gainDist.pdf", "Overwrite");
+    c3->Close();
+    delete c3;
+}
+
+void GainRepeatability::calculate_channelGainRMS()
+{
+
 }

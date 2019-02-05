@@ -6,6 +6,8 @@
 
 #include <TH1D.h>
 #include <TGraph.h>
+#include <TGraphErrors.h>
+
 
 class SameGain_DiffrntTemp
 {
@@ -17,6 +19,13 @@ public:
     void Evaluate();
 private:
     void draw_GainAndVoltage_against_temp();
+    void draw_meanGain_against_temperature();
+    void draw_voltage_against_temperature();
+    void draw_gain_temperature_distributions();
+    void draw_ly_temperature_distributions();
+    void calculate_ly_against_temp_Results();
+private:
+    void correct_ly_by_gain();
 private:
     std::string analysis_result_DIR = "/home/iwanicki/sw/sr90readout/results/sameGain_diffTemp";
 
@@ -30,7 +39,7 @@ private:
 
     std::vector< std::pair<double, TH1D*> > temperature_meanLY_histogram_pair;
 
-    TGraph* g_temp_meanLY;
+    TGraphErrors* g_temp_meanLY;
 };
 
 #endif // SAMEGAIN_DIFFRNTTEMP_HH

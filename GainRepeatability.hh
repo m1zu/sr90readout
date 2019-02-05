@@ -17,4 +17,9 @@ private:
     std::vector< TH1D* > vec_h_gain_allchannels;
     TGraph* g_meanGainValues;
     TH1D* h_meanGainValues;
+private:
+    unsigned int cherryPickChNr = 300;
+    TH1D* h_singleCh_gainDist;
+    std::vector<std::vector<double>> gainValue;
+    void calculate_channelGainRMS();
 };

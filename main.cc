@@ -15,16 +15,16 @@ int main(int argc, char** argv) {
     //TH1::AddDirectory(false);
     Helpers::setRootStyle();
 
-    QString filepath = ("/home/iwanicki/data/freeze/SR90_again_same_gain/SORTED/");
+    QString filepath = ("/home/iwanicki/data/freeze/SR90_again_same_gain/SORTED/ref/");
     QStringList files = QDir(filepath).entryList(QStringList() << "*messung*.root");
     const int nFiles = files.count();
     qDebug() << endl << "using" << nFiles << " files ... ";
 
     // Analysis Classes Initialization
 
-    //GainRepeatability gainRepeatability(nFiles);
+    GainRepeatability gainRepeatability(nFiles);
     //Check_Gain checkGain(nFiles);
-    SameGain_DiffrntTemp sameGain(nFiles);
+    //SameGain_DiffrntTemp sameGain(nFiles);
 
     // Data Processing
 
@@ -40,16 +40,16 @@ int main(int argc, char** argv) {
         double voltage = file.mid(0, 2).toDouble() + file.mid(3, 3).toDouble()*0.001;
         TH1D* h_gain_allChannels = Helpers::extractFromFile<TH1D>(fullPath, "parameter value 0 HistogramDisplay").front();
         TH1D* h_meanLY_allChannels = Helpers::extractFromFile<TH1D>(fullPath, "cluster signal value").front();
-        //gainRepeatability.AddData(h_gain_allChannels);
+        gainRepeatability.AddData(h_gain_allChannels);
         //checkGain.AddData(h_gain_allChannels);
-        sameGain.AddData(temperature, voltage, h_gain_allChannels, h_meanLY_allChannels);
+        //sameGain.AddData(temperature, voltage, h_gain_allChannels, h_meanLY_allChannels);
     }
 
     // Evaluation
 
-    //gainRepeatability.Evaluate();
+    gainRepeatability.Evaluate();
     //checkGain.Evaluate();
-    sameGain.Evaluate();
+    //sameGain.Evaluate();
 
     //application.Run();
     return 0;
